@@ -176,13 +176,18 @@ with dashboard:
             "basket_index": f"Basket index ({base_year}=100)",
         },
     )
-    fig_scatter.update_layout(height=260, margin=dict(l=10, r=10, t=10, b=10))
+    fig_scatter.update_layout(
+        height=260,
+        margin=dict(l=10, r=10, t=10, b=10),
+        clickmode="event+select",
+        dragmode="select",
+    )
 
     with top_l:
         title_col, info_col = st.columns([0.82, 0.18])
         with title_col:
             st.subheader("Change–level scatter")
-            st.caption("Select points to filter all other views (brushing & linking)")
+            st.caption("Click a point or drag a box to filter all other views. Double-click to clear.")
         with info_col:
             with st.popover("Info"):
                 st.markdown(
@@ -198,14 +203,30 @@ with dashboard:
                 )
 
         sel = st.plotly_chart(fig_scatter, width="stretch", on_select="rerun")
+        sel = st.plotly_chart(
+            fig_scatter,
+            width="stretch",
+            on_select="rerun",
+            config={
+                "displaylogo": False,
+                "modeBarButtonsToAdd": ["select2d", "lasso2d"],
+            },
+        )
 
+    # --- Parse selection
     # --- Parse selection
     selected_dates = None
     try:
         selection = sel.get("selection") if isinstance(sel, dict) else getattr(sel, "selection", None)
-        if selection:
-            idxs = [p["pointIndex"] for p in selection["points"]]
-            selected_dates = set(df_plot.iloc[idxs]["date"].dt.normalize())
+        if isinstance(selection, dict):
+            pts = selection.get("points", [])
+            idxs = [
+                p.get("pointIndex")
+                for p in pts
+                if isinstance(p, dict) and p.get("pointIndex") is not None
+            ]
+            if idxs:
+                selected_dates = set(df_plot.iloc[idxs]["date"].dt.normalize())
     except Exception:
         selected_dates = None
 
