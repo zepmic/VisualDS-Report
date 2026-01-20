@@ -27,7 +27,7 @@ with st.popover("How to use this dashboard"):
     st.markdown(
         """
         **What does this dashboard show?**  
-        Monthly energy commodity prices as an index (base year = 100). The **energy basket** is the average of the selected commodities.
+        Monthly commodity prices as an index (base year = 100). The **basket** is the average of the selected commodities.
 
         **How to interact (brushing & linking):**
         - Use the **sidebar** to choose commodities, time range, and the change metric (YoY or MoM).
@@ -138,7 +138,7 @@ df_plot = pd.DataFrame({
 k1,k2,k3, k4 = st.columns(4)
 with k1:
     st.metric("Selected series", len(selected_cols))
-    st.caption("Number of energy commodities in the basket")
+    st.caption("Number of commodities in the basket")
 
 with k2:
     st.metric("Current index level", f"{basket.iloc[-1]:.1f}")
