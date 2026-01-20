@@ -201,8 +201,6 @@ with dashboard:
                     *y-axis:* basket index level (base year = 100)
                     """
                 )
-
-        sel = st.plotly_chart(fig_scatter, width="stretch", on_select="rerun")
         sel = st.plotly_chart(
             fig_scatter,
             width="stretch",
