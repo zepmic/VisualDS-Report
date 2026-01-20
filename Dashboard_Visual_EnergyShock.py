@@ -27,16 +27,19 @@ with st.popover("How to use this dashboard"):
     st.markdown(
         """
         **What does this dashboard show?**  
-        This dashboard visualizes monthly energy commodity prices using an index (base year = 100).
-        The energy basket is computed as the average of the selected commodities.
+        Monthly energy commodity prices as an index (base year = 100). The **energy basket** is the average of the selected commodities.
 
-        **How to interact:**
-        - Use the **sidebar** to select commodities, time range, and change metric (YoY or MoM).
-        - Use the **scatter plot** to select months (brushing).
-        - Selecting points updates all other charts automatically (linking).
+        **How to interact (brushing & linking):**
+        - Use the **sidebar** to choose commodities, time range, and the change metric (YoY or MoM).
+        - In the **scatter plot**, drag a box (or lasso) to select months.
+        - The selection filters the other charts automatically.
 
-        **Goal:**
-        To explore energy price shocks, volatility, and structural changes over time.
+        **Chart guide:**
+        - **Change–level scatter:** compares price *changes* vs. *price level* for each month (good for spotting shocks/outliers).
+        - **Basket change over time:** shows when strong increases/decreases occur.
+        - **Indexed price levels:** compares indexed price paths of the selected commodities.
+        - **Volatility ranking:** ranks commodities by return volatility in the current (and possibly brushed) window.
+        - **Details tab:** distribution + table for transparency.
         """
     )
 
@@ -176,7 +179,24 @@ with dashboard:
     fig_scatter.update_layout(height=260, margin=dict(l=10, r=10, t=10, b=10))
 
     with top_l:
-        st.subheader("Change–level scatter")
+        title_col, info_col = st.columns([0.82, 0.18])
+        with title_col:
+            st.subheader("Change–level scatter")
+            st.caption("Select points to filter all other views (brushing & linking)")
+        with info_col:
+            with st.popover("Info"):
+                st.markdown(
+                    """
+                    Each point is one month.
+
+                    - **High y + high x:** strong price shocks at an already high price level.
+                    - **Low y + extreme x:** volatile phases after price drops.
+
+                    *x-axis:* basket change (YoY or MoM)  
+                    *y-axis:* basket index level (base year = 100)
+                    """
+                )
+
         sel = st.plotly_chart(fig_scatter, width="stretch", on_select="rerun")
 
     # --- Parse selection
@@ -208,7 +228,19 @@ with dashboard:
     fig_change.update_layout(height=260, margin=dict(l=10, r=10, t=30, b=10))
 
     with top_r:
-        st.subheader("Basket change over time")
+        title_col, info_col = st.columns([0.82, 0.18])
+        with title_col:
+            st.subheader("Basket change over time")
+        with info_col:
+            with st.popover("Info"):
+                st.markdown(
+                    """
+                    Time-series of the basket change.
+
+                    Use this to see **when** large increases/decreases happen and whether shocks are isolated or persistent.
+                    """
+                )
+
         st.plotly_chart(fig_change, width="stretch")
 
     # --- Indexed price levels
@@ -227,7 +259,19 @@ with dashboard:
     fig_lines.update_layout(height=260, margin=dict(l=10, r=10, t=30, b=10))
 
     with bot_l:
-        st.subheader("Indexed price levels")
+        title_col, info_col = st.columns([0.82, 0.18])
+        with title_col:
+            st.subheader("Indexed price levels")
+        with info_col:
+            with st.popover("Info"):
+                st.markdown(
+                    """
+                    Indexed price levels (base year = 100) for each selected commodity.
+
+                    Use this to compare **co-movement** and identify which commodity drives the basket.
+                    """
+                )
+
         st.plotly_chart(fig_lines, width="stretch")
 
     # --- Volatility ranking (FIXED)
@@ -237,7 +281,19 @@ with dashboard:
     fig_vol.update_layout(height=260, margin=dict(l=10, r=10, t=30, b=10))
 
     with bot_r:
-        st.subheader("Volatility ranking")
+        title_col, info_col = st.columns([0.82, 0.18])
+        with title_col:
+            st.subheader("Volatility ranking")
+        with info_col:
+            with st.popover("Info"):
+                st.markdown(
+                    """
+                    Volatility is computed as the **standard deviation of monthly returns**.
+
+                    Higher bars mean the commodity is more volatile in the current time window (and selection, if active).
+                    """
+                )
+
         st.plotly_chart(fig_vol, width="stretch")
 
 with details:
