@@ -22,6 +22,24 @@ st.set_page_config(page_title="Energy Shock Dashboard", layout="wide")
 st.title("Energy shock dashboard    ")
 st.caption("Base index: 2007 = 100 · Source: World Bank CMO (Monthly)")
 
+
+with st.popover("How to use this dashboard"):
+    st.markdown(
+        """
+        **What does this dashboard show?**  
+        This dashboard visualizes monthly energy commodity prices using an index (base year = 100).
+        The energy basket is computed as the average of the selected commodities.
+
+        **How to interact:**
+        - Use the **sidebar** to select commodities, time range, and change metric (YoY or MoM).
+        - Use the **scatter plot** to select months (brushing).
+        - Selecting points updates all other charts automatically (linking).
+
+        **Goal:**
+        To explore energy price shocks, volatility, and structural changes over time.
+        """
+    )
+
 # -------------------------------------------------------------------
 # Load & clean data
 # -------------------------------------------------------------------
@@ -114,12 +132,22 @@ df_plot = pd.DataFrame({
 # -------------------------------------------------------------------
 # KPIs
 # -------------------------------------------------------------------
+with k1:
+    st.metric("Selected series", len(selected_cols))
+    st.caption("Number of energy commodities in the basket")
 
-k1, k2, k3, k4 = st.columns(4)
-k1.metric("Series", len(selected_cols))
-k2.metric("Last index", f"{basket.iloc[-1]:.1f}")
-k3.metric("Peak", f"{basket.max():.1f}")
-k4.metric("Trough", f"{basket.min():.1f}")
+with k2:
+    st.metric("Current index level", f"{basket.iloc[-1]:.1f}")
+    st.caption("Latest basket value relative to the base year")
+
+with k3:
+    st.metric("Peak level", f"{basket.max():.1f}")
+    st.caption("Highest basket value in the selected time window")
+
+with k4:
+    st.metric("Trough level", f"{basket.min():.1f}")
+    st.caption("Lowest basket value in the selected time window")
+
 
 st.divider()
 
@@ -148,6 +176,7 @@ with dashboard:
 
     with top_l:
         st.subheader("Change–level scatter")
+        st.caption("Select points to filter all other views (brushing & linking)")
         sel = st.plotly_chart(fig_scatter, width="stretch", on_select="rerun")
 
     # --- Parse selection
