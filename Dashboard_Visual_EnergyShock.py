@@ -204,27 +204,33 @@ with dashboard:
         sel = st.plotly_chart(
             fig_scatter,
             width="stretch",
+            key="scatter_brush",
             on_select="rerun",
+            selection_mode=("points", "box", "lasso"),
             config={
                 "displaylogo": False,
                 "modeBarButtonsToAdd": ["select2d", "lasso2d"],
+                "scrollZoom": False,
             },
         )
 
-    # --- Parse selection
     # --- Parse selection
     selected_dates = None
     try:
         selection = sel.get("selection") if isinstance(sel, dict) else getattr(sel, "selection", None)
         if isinstance(selection, dict):
-            pts = selection.get("points", [])
-            idxs = [
-                p.get("pointIndex")
-                for p in pts
-                if isinstance(p, dict) and p.get("pointIndex") is not None
-            ]
+            # Preferred: Streamlit provides point indices directly
+            idxs = selection.get("point_indices")
+            if not idxs:
+                # Fallback: extract from points payload
+                pts = selection.get("points", [])
+                idxs = [
+                    p.get("point_index")
+                    for p in pts
+                    if isinstance(p, dict) and p.get("point_index") is not None
+                ]
             if idxs:
-                selected_dates = set(df_plot.iloc[idxs]["date"].dt.normalize())
+                selected_dates = set(df_plot.iloc[list(idxs)]["date"].dt.normalize())
     except Exception:
         selected_dates = None
 
