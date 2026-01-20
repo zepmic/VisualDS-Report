@@ -18,8 +18,8 @@ st.markdown(
 # Page config
 # -------------------------------------------------------------------
 
-st.set_page_config(page_title="Energy Shock Dashboard", layout="wide")
-st.title("Energy shock dashboard    ")
+st.set_page_config(page_title="Energy Price Shocks Dashboard", layout="wide")
+st.title("Energy Price Shocks Dashboard")
 st.caption("Base index: 2007 = 100 · Source: World Bank CMO (Monthly)")
 
 
