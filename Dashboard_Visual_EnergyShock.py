@@ -132,6 +132,7 @@ df_plot = pd.DataFrame({
 # -------------------------------------------------------------------
 # KPIs
 # -------------------------------------------------------------------
+k1,k2,k3, k4 = st.columns(4)
 with k1:
     st.metric("Selected series", len(selected_cols))
     st.caption("Number of energy commodities in the basket")
