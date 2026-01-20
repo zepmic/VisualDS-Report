@@ -177,7 +177,6 @@ with dashboard:
 
     with top_l:
         st.subheader("Change–level scatter")
-        st.caption("Select points to filter all other views (brushing & linking)")
         sel = st.plotly_chart(fig_scatter, width="stretch", on_select="rerun")
 
     # --- Parse selection
